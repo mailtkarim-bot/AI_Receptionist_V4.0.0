@@ -1,0 +1,53 @@
+{
+  "functions": [
+    {
+      "name": "book_appointment",
+      "description": "Book an appointment for the caller",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {"type": "string", "description": "Appointment date in YYYY-MM-DD format"},
+          "time": {"type": "string", "description": "Appointment time in HH:MM format (24h)"},
+          "duration_minutes": {"type": "integer", "description": "Duration in minutes, default 30", "default": 30},
+          "service": {"type": "string", "description": "Type of service: checkup, cleaning, whitening, filling, extraction, emergency, consultation, other"},
+          "phone": {"type": "string", "description": "Caller phone number with country code"}
+        },
+        "required": ["date", "time", "phone"]
+      }
+    },
+    {
+      "name": "transfer_to_human",
+      "description": "Transfer the call to a human staff member",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "reason": {"type": "string", "description": "Why transfer is needed: complex_case, emergency, caller_request, language_barrier, other"}
+        },
+        "required": ["reason"]
+      }
+    },
+    {
+      "name": "send_sms_confirmation",
+      "description": "Send an SMS confirmation to the caller after booking",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "phone": {"type": "string", "description": "Caller phone number"},
+          "message": {"type": "string", "description": "Confirmation message text"}
+        },
+        "required": ["phone", "message"]
+      }
+    },
+    {
+      "name": "check_availability",
+      "description": "Check available appointment slots for a given date",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {"type": "string", "description": "Date to check in YYYY-MM-DD format"}
+        },
+        "required": ["date"]
+      }
+    }
+  ]
+}

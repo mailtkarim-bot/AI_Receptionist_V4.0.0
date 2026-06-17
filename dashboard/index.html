@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Receptionist — Real-time call tracking dashboard">
+    <title>AI Receptionist — Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>📞 AI Receptionist</h1>
+            <p>Real-time call tracking dashboard</p>
+        </div>
+        <div class="header-meta">
+            <span id="last-update" class="last-update">Loading...</span>
+            <button onclick="loadCalls()" class="refresh-btn" title="Refresh now">🔄</button>
+        </div>
+    </header>
+
+    <section id="stats">
+        <div class="card">
+            <div class="label">Calls Today</div>
+            <div class="value" id="total">0</div>
+        </div>
+        <div class="card green">
+            <div class="label">Appointments</div>
+            <div class="value" id="booked">0</div>
+        </div>
+        <div class="card red">
+            <div class="label">Missed</div>
+            <div class="value" id="missed">0</div>
+        </div>
+        <div class="card blue">
+            <div class="label">Avg Duration</div>
+            <div class="value" id="avg-duration">0s</div>
+        </div>
+    </section>
+
+    <section id="filters">
+        <input type="text" id="search-phone" placeholder="Search by phone number..." autocomplete="off">
+        <select id="filter-status">
+            <option value="all">All Status</option>
+            <option value="completed">Completed</option>
+            <option value="no-answer">Missed</option>
+            <option value="transferred">Transferred</option>
+        </select>
+    </section>
+
+    <section id="table-container">
+        <table id="calls-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                    <th>Appointment</th>
+                    <th>Transcript</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" class="empty">Loading calls...</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>AI Receptionist Enterprise v2.1 — Built with ❤️ by <a href="#" target="_blank">Your Name</a></p>
+        <p class="footer-hint">Auto-refreshes every 30 seconds • <a href="/docs">API Docs</a></p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

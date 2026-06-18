@@ -3,6 +3,7 @@
 # ============================================
 fastapi==0.111.0
 uvicorn[standard]==0.30.0
+gunicorn==22.0.0
 python-dotenv==1.0.1
 pydantic==2.7.4
 email-validator==2.1.1
@@ -11,7 +12,7 @@ email-validator==2.1.1
 # Database (PostgreSQL + ORM + Migrations)
 # ============================================
 sqlalchemy==2.0.31
-psycopg2-binary==2.9.9
+psycopg2==2.9.9
 alembic==1.13.2
 
 # ============================================
@@ -27,7 +28,6 @@ slowapi==0.1.9
 # ============================================
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
-google-auth-httplib2==0.2.0
 google-api-python-client==2.131.0
 twilio==9.1.0
 
@@ -36,6 +36,11 @@ twilio==9.1.0
 # ============================================
 sentry-sdk[fastapi]==2.5.1
 structlog==24.2.0
+
+# ============================================
+# Scheduling
+# ============================================
+apscheduler==3.10.4
 
 # ============================================
 # Testing

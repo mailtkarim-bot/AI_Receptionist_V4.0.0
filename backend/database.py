@@ -1,4 +1,4 @@
-"""Database configuration -- SQLAlchemy engine, session, and base."""
+"""Database configuration — SQLAlchemy engine, session, and base."""
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -33,5 +33,5 @@ def get_db() -> Session:
 
 
 def init_db() -> None:
-    """Create all tables. Use in production bootstrap."""
+    """Create all tables. Use ONLY in local/bootstrap. NEVER in production with Alembic."""
     Base.metadata.create_all(bind=engine)

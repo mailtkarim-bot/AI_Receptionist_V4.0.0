@@ -40,3 +40,13 @@ class HealthResponse(BaseModel):
     version: str
     service: str
     timestamp: str
+
+
+class EraseRequest(BaseModel):
+    """GDPR Right to Erasure request."""
+    phone_hash: str = Field(..., min_length=64, max_length=64, description="SHA-256 hash of phone")
+
+
+class RefreshTokenRequest(BaseModel):
+    """Token refresh request."""
+    refresh_token: str

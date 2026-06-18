@@ -61,6 +61,12 @@ jobs:
           DATABASE_URL: postgresql://test:test@localhost:5432/ai_receptionist_test
           SECRET_KEY: test-secret-key-32-chars-long!!
           ADMIN_PASSWORD: testpass123
+          VAPI_API_KEY: test_vapi_key
+          VAPI_WEBHOOK_SECRET: test_webhook_secret
+          TWILIO_ACCOUNT_SID: test_twilio_sid
+          TWILIO_AUTH_TOKEN: test_twilio_token
+          TWILIO_PHONE_NUMBER: +1234567890
+          EMERGENCY_PHONE_NUMBER: +9999999999
         run: |
           pytest tests/ -v --cov=backend --cov-report=xml --cov-report=term
 

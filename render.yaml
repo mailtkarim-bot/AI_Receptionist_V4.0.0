@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: starter
     buildCommand: "pip install -r requirements.txt && alembic upgrade head"
-    startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port 10000"
+    startCommand: "gunicorn backend.main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:10000 --timeout 60"
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
@@ -33,9 +33,21 @@ services:
       - key: TIMEZONE
         value: Asia/Dubai
       - key: DASHBOARD_ORIGIN
-        value: https://your-username.github.io
+        sync: false
       - key: SENTRY_DSN
         sync: false
+      - key: EMERGENCY_PHONE_NUMBER
+        sync: false
+      - key: QUIET_HOURS_START
+        value: "21"
+      - key: QUIET_HOURS_END
+        value: "8"
+      - key: RETENTION_CALLS_DAYS
+        value: "730"
+      - key: RETENTION_AUDIT_DAYS
+        value: "365"
+      - key: RETENTION_SMS_QUEUE_DAYS
+        value: "30"
 
 databases:
   - name: ai-receptionist-db

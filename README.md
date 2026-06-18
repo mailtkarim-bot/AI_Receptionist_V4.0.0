@@ -11,6 +11,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Render](https://img.shields.io/badge/Deploy-Render-46E3B7?logo=render)](https://render.com)
 [![Security](https://img.shields.io/badge/Security-Audited%20Tier--1-success?style=flat&logo=shield)](SECURITY.md)
+[![Enterprise](https://img.shields.io/badge/Need%20Enterprise%3F-Click%20Here-purple?style=flat&logo=rocket)](https://github.com/mailtkarim-bot/AI_Receptionist_Enterprise_V2.1)
 
 **24/7 Call Answering · Appointment Booking · SMS Confirmation · JWT-Secured Dashboard · Emergency Transfer · GDPR Compliant**
 
@@ -201,7 +202,7 @@ This is a **one-time deployment service**, not a monthly subscription.
 | **HIPAA-ready** | *Requires third-party audit before PHI handling* |
 | **OWASP Top 10** | Mitigated: Injection, Broken Auth, Sensitive Data Exposure, Security Misconfiguration, Insufficient Logging |
 
-> **Disclaimer:** This project is provided for professional portfolio and educational purposes. A **third-party security audit is mandatory** before deployment in regulated healthcare environments. The author assumes no liability for production deployment without proper review. All code includes prominent warnings that projects are educational and require professional audit before real deployment.
+> **Disclaimer:** This project is provided for professional portfolio and educational purposes. A **third-party security audit is mandatory** before production deployment in healthcare or regulated environments. The author is not liable for misuse or deployment without proper review. All code includes prominent warnings that projects are educational and require professional audit before real deployment.
 
 ---
 
@@ -379,6 +380,22 @@ pytest tests/ --cov=backend --cov-report=term-missing --cov-fail-under=85
 | **Q4 2026** | Voice cloning for branded clinic voices |
 | **Q1 2027** | Analytics dashboard with revenue recovery metrics |
 | **Q2 2027** | AWS KMS integration for end-to-end PII encryption |
+
+---
+
+## 🏢 Need Something Bigger?
+
+This toolkit is perfect for **solo clinics and small businesses** who want to own their infrastructure.
+
+If you're a **chain of clinics, a franchise, or a corporate group** looking for:
+- Multi-tenant SaaS platform
+- 3-tier subscription management (Basic / Pro / Enterprise)
+- WhatsApp, Email, and Web3 USDC payments
+- Redis-backed security, Docker orchestration, React dashboard
+- White-label solution with your own branding
+
+**→ Check out [AI Receptionist Enterprise](https://github.com/mailtkarim-bot/AI_Receptionist_Enterprise_V2.1)**  
+The same voice AI power, engineered for scale.
 
 ---
 

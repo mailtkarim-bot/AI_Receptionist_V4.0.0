@@ -3,74 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI Receptionist — Real-time call tracking dashboard">
-    <title>AI Receptionist — Dashboard</title>
+    <title>AI Receptionist — Enterprise Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📞</text></svg>">
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1>📞 AI Receptionist</h1>
-            <p>Real-time call tracking dashboard</p>
-        </div>
-        <div class="header-meta">
-            <span id="last-update" class="last-update">Loading...</span>
-            <button onclick="loadCalls()" class="refresh-btn" title="Refresh now">🔄</button>
-        </div>
-    </header>
 
-    <section id="stats">
-        <div class="card">
-            <div class="label">Calls Today</div>
-            <div class="value" id="total">0</div>
+    <!-- ==================== AUTH WALL ==================== -->
+    <div id="auth-wall" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="background:#1e293b;padding:2.5rem;border-radius:1rem;min-width:320px;max-width:400px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+            <h2 style="color:#fff;margin-bottom:0.5rem;text-align:center;">🔐 AI Receptionist</h2>
+            <p style="color:#94a3b8;text-align:center;margin-bottom:1.5rem;font-size:0.875rem;">Enterprise Dashboard</p>
+            <input id="login-user" type="text" placeholder="Username" style="width:100%;padding:0.75rem;margin-bottom:0.75rem;border-radius:0.5rem;border:none;background:#334155;color:#fff;box-sizing:border-box;">
+            <input id="login-pass" type="password" placeholder="Password" style="width:100%;padding:0.75rem;margin-bottom:1rem;border-radius:0.5rem;border:none;background:#334155;color:#fff;box-sizing:border-box;">
+            <button onclick="doLogin()" style="width:100%;padding:0.75rem;background:#3b82f6;color:#fff;border:none;border-radius:0.5rem;font-weight:600;cursor:pointer;">Login</button>
+            <p id="login-error" style="color:#ef4444;margin-top:0.75rem;text-align:center;display:none;font-size:0.875rem;">Invalid credentials</p>
         </div>
-        <div class="card green">
-            <div class="label">Appointments</div>
-            <div class="value" id="booked">0</div>
-        </div>
-        <div class="card red">
-            <div class="label">Missed</div>
-            <div class="value" id="missed">0</div>
-        </div>
-        <div class="card blue">
-            <div class="label">Avg Duration</div>
-            <div class="value" id="avg-duration">0s</div>
-        </div>
-    </section>
+    </div>
 
-    <section id="filters">
-        <input type="text" id="search-phone" placeholder="Search by phone number..." autocomplete="off">
-        <select id="filter-status">
-            <option value="all">All Status</option>
-            <option value="completed">Completed</option>
-            <option value="no-answer">Missed</option>
-            <option value="transferred">Transferred</option>
-        </select>
-    </section>
+    <!-- ==================== DASHBOARD ==================== -->
+    <div class="container">
+        <header>
+            <h1>🤖 AI Receptionist</h1>
+            <p>Real-time call analytics & appointment tracking</p>
+            <button onclick="logout()" style="float:right;background:#ef4444;color:#fff;border:none;padding:0.5rem 1rem;border-radius:0.5rem;cursor:pointer;">Logout</button>
+        </header>
 
-    <section id="table-container">
-        <table id="calls-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Duration</th>
-                    <th>Appointment</th>
-                    <th>Transcript</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="6" class="empty">Loading calls...</td></tr>
-            </tbody>
-        </table>
-    </section>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>📞 Total Calls</h3>
+                <p id="stat-total">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Booked</h3>
+                <p id="stat-booked">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>❌ Missed</h3>
+                <p id="stat-missed">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>⏱️ Avg Duration</h3>
+                <p id="stat-duration">0s</p>
+            </div>
+        </div>
 
-    <footer>
-        <p>AI Receptionist Enterprise v2.1 — Built with ❤️ by <a href="#" target="_blank">Your Name</a></p>
-        <p class="footer-hint">Auto-refreshes every 30 seconds • <a href="/docs">API Docs</a></p>
-    </footer>
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="filter-phone" placeholder="Filter by phone..." oninput="loadCalls()">
+            <select id="filter-status" onchange="loadCalls()">
+                <option value="">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="no-answer">No Answer</option>
+                <option value="transferred">Transferred</option>
+            </select>
+            <button onclick="loadCalls()" style="padding:0.5rem 1rem;background:#3b82f6;color:#fff;border:none;border-radius:0.5rem;cursor:pointer;">Refresh</button>
+        </div>
+
+        <!-- Calls Table -->
+        <div class="table-container">
+            <table id="calls-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                        <th>Appointment</th>
+                        <th>Emergency</th>
+                    </tr>
+                </thead>
+                <tbody id="calls-body">
+                    <tr><td colspan="6" style="text-align:center;color:#94a3b8;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p>AI Receptionist Enterprise v3.0.0 | <span id="last-updated">Never</span></p>
+        </footer>
+    </div>
 
     <script src="app.js"></script>
 </body>

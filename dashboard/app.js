@@ -1,139 +1,158 @@
-/* AI Receptionist Dashboard — Frontend Logic */
+// ============================================
+// CONFIGURATION -- CHANGEZ CECI AVANT DEPLOIEMENT
+// ============================================
+const API_URL = 'https://votre-app-sur-render.com'; // <-- METTEZ VOTRE URL RENDER ICI
 
-const API_URL = "https://votre-backend.onrender.com"; // CHANGE THIS
+// ============================================
+// AUTHENTICATION
+// ============================================
 
-// DOM Elements
-const els = {
-    total: document.getElementById("total"),
-    booked: document.getElementById("booked"),
-    missed: document.getElementById("missed"),
-    avgDuration: document.getElementById("avg-duration"),
-    searchPhone: document.getElementById("search-phone"),
-    filterStatus: document.getElementById("filter-status"),
-    tbody: document.querySelector("#calls-table tbody"),
-    lastUpdate: document.getElementById("last-update"),
-};
-
-/**
- * Load calls from backend API
- */
-async function loadCalls() {
-    try {
-        const res = await fetch(`${API_URL}/calls`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const calls = await res.json();
-        renderCalls(calls);
-        updateLastUpdate();
-    } catch (e) {
-        console.error("[Dashboard] Error loading calls:", e);
-        els.tbody.innerHTML = `
-            <tr><td colspan="6" class="error">
-                <strong>Connection Error</strong><br>
-                Unable to reach backend. Check API_URL in app.js.<br>
-                <small>${e.message}</small>
-            </td></tr>`;
-    }
+function doLogin() {
+    const username = document.getElementById('login-user').value;
+    const password = document.getElementById('login-pass').value;
+    
+    const form = new FormData();
+    form.append('username', username);
+    form.append('password', password);
+    
+    fetch(`${API_URL}/token`, {method: 'POST', body: form})
+        .then(r => {
+            if (!r.ok) throw new Error('Invalid credentials');
+            return r.json();
+        })
+        .then(data => {
+            localStorage.setItem('ai_token', data.access_token);
+            document.getElementById('auth-wall').style.display = 'none';
+            loadDashboard();
+        })
+        .catch(() => {
+            document.getElementById('login-error').style.display = 'block';
+        });
 }
 
-/**
- * Load statistics from /stats endpoint
- */
+function logout() {
+    localStorage.removeItem('ai_token');
+    location.reload();
+}
+
+// Auto-login check on page load
+if (localStorage.getItem('ai_token')) {
+    document.getElementById('auth-wall').style.display = 'none';
+    loadDashboard();
+}
+
+// ============================================
+// API HELPER (with Bearer token)
+// ============================================
+
+function apiFetch(path, opts = {}) {
+    const token = localStorage.getItem('ai_token');
+    if (!token) {
+        document.getElementById('auth-wall').style.display = 'flex';
+        return Promise.reject('No token');
+    }
+    
+    opts.headers = {
+        ...opts.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+    
+    return fetch(`${API_URL}${path}`, opts);
+}
+
+// ============================================
+// DASHBOARD LOGIC
+// ============================================
+
+function loadDashboard() {
+    loadStats();
+    loadCalls();
+}
+
 async function loadStats() {
     try {
-        const res = await fetch(`${API_URL}/stats`);
-        if (!res.ok) return;
+        const res = await apiFetch('/stats');
+        if (!res.ok) throw new Error('Auth failed');
         const stats = await res.json();
-        els.total.textContent = stats.total || 0;
-        els.booked.textContent = stats.booked || 0;
-        els.missed.textContent = stats.missed || 0;
-        els.avgDuration.textContent = stats.avg_duration_seconds
-            ? `${stats.avg_duration_seconds}s`
-            : "0s";
+        
+        document.getElementById('stat-total').textContent = stats.total || 0;
+        document.getElementById('stat-booked').textContent = stats.booked || 0;
+        document.getElementById('stat-missed').textContent = stats.missed || 0;
+        document.getElementById('stat-duration').textContent = (stats.avg_duration_seconds || 0) + 's';
+        
+        document.getElementById('last-updated').textContent = new Date().toLocaleString();
     } catch (e) {
-        console.error("[Dashboard] Error loading stats:", e);
+        console.error('Stats error:', e);
+        if (e.message === 'Auth failed') {
+            localStorage.removeItem('ai_token');
+            document.getElementById('auth-wall').style.display = 'flex';
+        }
     }
 }
 
-/**
- * Render calls table with filters
- */
-function renderCalls(calls) {
-    const search = els.searchPhone.value.trim().toLowerCase();
-    const statusFilter = els.filterStatus.value;
-
-    const filtered = calls.filter(c => {
-        const matchPhone = !search || (c.phone || "").toLowerCase().includes(search);
-        const matchStatus = statusFilter === "all" || c.status === statusFilter;
-        return matchPhone && matchStatus;
-    }).reverse();
-
-    // Update stats from filtered data (fallback if /stats fails)
-    if (!els.total.textContent || els.total.textContent === "0") {
-        els.total.textContent = calls.length;
-        els.booked.textContent = calls.filter(c => c.appointment).length;
-        els.missed.textContent = calls.filter(c => c.status === "no-answer").length;
-        const durations = calls.filter(c => c.duration_seconds).map(c => c.duration_seconds);
-        const avg = durations.length ? Math.round(durations.reduce((a,b) => a+b, 0) / durations.length) : 0;
-        els.avgDuration.textContent = `${avg}s`;
-    }
-
-    // Render table
-    if (!filtered.length) {
-        els.tbody.innerHTML = `<tr><td colspan="6" class="empty">No calls found</td></tr>`;
-        return;
-    }
-
-    els.tbody.innerHTML = filtered.map(c => {
-        const time = c.timestamp ? new Date(c.timestamp).toLocaleTimeString() : "—";
-        const phone = c.phone || "Anonymous";
-        const statusClass = c.status === "completed" ? "status-ok" : c.status === "no-answer" ? "status-ko" : "status-warn";
-        const appt = c.appointment
-            ? `✅ ${c.appointment.date} ${c.appointment.time}`
-            : "—";
-        const transcript = c.transcript
-            ? `<details><summary>View</summary><p>${escapeHtml(c.transcript.substring(0, 200))}...</p></details>`
-            : "—";
-
-        return `<tr>
-            <td>${time}</td>
-            <td>${escapeHtml(phone)}</td>
-            <td><span class="badge ${statusClass}">${c.status || "unknown"}</span></td>
-            <td>${c.duration_seconds || "—"}s</td>
-            <td>${appt}</td>
-            <td>${transcript}</td>
-        </tr>`;
-    }).join("");
-}
-
-/**
- * Escape HTML to prevent XSS
- */
-function escapeHtml(text) {
-    if (!text) return "";
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-/**
- * Update last refresh timestamp
- */
-function updateLastUpdate() {
-    if (els.lastUpdate) {
-        els.lastUpdate.textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+async function loadCalls() {
+    const tbody = document.getElementById('calls-body');
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8;">Loading...</td></tr>';
+    
+    try {
+        const phoneFilter = document.getElementById('filter-phone').value;
+        const statusFilter = document.getElementById('filter-status').value;
+        
+        let url = '/calls?limit=100';
+        if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
+        if (phoneFilter) url += `&phone=${encodeURIComponent(phoneFilter)}`;
+        
+        const res = await apiFetch(url);
+        if (!res.ok) throw new Error('Auth failed');
+        const calls = await res.json();
+        
+        if (calls.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8;">No calls found</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = calls.map(call => {
+            const appt = call.appointment || {};
+            const apptText = appt.date 
+                ? `${appt.date} ${appt.time} (${appt.service || 'general'})`
+                : '-';
+            
+            const emergencyBadge = call.is_emergency 
+                ? '<span style="background:#ef4444;color:#fff;padding:0.2rem 0.5rem;border-radius:0.25rem;font-size:0.75rem;">EMERGENCY</span>' 
+                : '-';
+            
+            const statusColor = {
+                'completed': '#22c55e',
+                'no-answer': '#ef4444',
+                'transferred': '#f59e0b'
+            }[call.status] || '#94a3b8';
+            
+            return `
+                <tr>
+                    <td>${call.created_at ? new Date(call.created_at).toLocaleString() : '-'}</td>
+                    <td>${call.phone || 'Unknown'}</td>
+                    <td><span style="color:${statusColor};font-weight:600;">${call.status || 'unknown'}</span></td>
+                    <td>${call.duration_seconds ? call.duration_seconds + 's' : '-'}</td>
+                    <td>${apptText}</td>
+                    <td>${emergencyBadge}</td>
+                </tr>
+            `;
+        }).join('');
+        
+    } catch (e) {
+        console.error('Calls error:', e);
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#ef4444;">Error loading data</td></tr>';
+        if (e.message === 'Auth failed') {
+            localStorage.removeItem('ai_token');
+            document.getElementById('auth-wall').style.display = 'flex';
+        }
     }
 }
 
-// Event Listeners
-els.searchPhone.addEventListener("input", loadCalls);
-els.filterStatus.addEventListener("change", loadCalls);
-
-// Auto-refresh every 30 seconds
-loadCalls();
-loadStats();
+// Refresh every 30 seconds
 setInterval(() => {
-    loadCalls();
-    loadStats();
+    if (localStorage.getItem('ai_token')) {
+        loadDashboard();
+    }
 }, 30000);
-
-console.log("[AI Receptionist Dashboard] Loaded. API:", API_URL);

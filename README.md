@@ -1,7 +1,10 @@
+<div align="center">
+
 # AI Voice Agent — Smart Appointment Booking for SMEs
+
 **Freelance AI Voice Agent Toolkit — Universal Edition v4.0.0**
 
-![Architecture](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Vapi](https://img.shields.io/badge/Vapi-AI%20Voice-FF6F00?style=for-the-badge)
 ![Twilio](https://img.shields.io/badge/Twilio-F22F46?style=for-the-badge&logo=twilio&logoColor=white)
@@ -9,6 +12,8 @@
 **24/7 Call Answering · Appointment Booking · SMS Confirmation · JWT-Secured Dashboard · Emergency Transfer · GDPR Compliant**
 
 📐 Architecture · 🚀 Quick Start · 💰 Business Model · 🔐 Security · 📞 Contact
+
+</div>
 
 ---
 
@@ -58,7 +63,7 @@ This toolkit lets a **freelance developer** deploy a production-grade AI recepti
 
 ## 📐 Architecture
 
-```
+```mermaid
 flowchart TB
     subgraph Caller
         A[📞 Customer calls]
@@ -431,6 +436,24 @@ See `SECTORS.md` for the full adaptation matrix and `customize.sh` for automated
 | **Q4 2026** | Voice cloning for branded business voices |
 | **Q1 2027** | Analytics dashboard with revenue recovery metrics |
 | **Q2 2027** | AWS KMS integration for end-to-end PII encryption |
+
+---
+
+## 🏢 Need Something Bigger?
+
+This toolkit is perfect for **solo businesses and small SMEs** who want to own their infrastructure.
+
+If you're a **chain, franchise, or corporate group** looking for:
+
+- Multi-tenant SaaS platform
+- 3-tier subscription management (Basic / Pro / Enterprise)
+- WhatsApp, Email, and Web3 USDC payments
+- Redis-backed security, Docker orchestration, React dashboard
+- White-label solution with your own branding
+
+**→ Check out AI Receptionist Enterprise**
+
+The same voice AI power, engineered for scale.
 
 ---
 
